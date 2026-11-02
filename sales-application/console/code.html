@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-slate-50" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Modern CRM Dashboard</title>
+<!-- Tailwind CSS v3 with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Font: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              300: '#6ee7b7',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+            }
+          }
+        }
+      }
+    }
+  </script>
+<!-- Styles for Chart styling and custom tweaks -->
+<style data-purpose="custom-layout">
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="h-full text-slate-800 bg-[#F9FAFB] flex flex-col md:flex-row overflow-x-hidden">
+<!-- BEGIN: Sidebar -->
+<aside class="w-full md:w-64 bg-white border-r border-slate-200/80 flex flex-col shrink-0 min-h-screen" data-purpose="sidebar-navigation">
+<!-- Workspace Brand / Selector -->
+<div class="px-5 py-4 flex items-center justify-between border-b border-slate-100">
+<div class="flex items-center space-x-2.5">
+<div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-sm shadow-sm shadow-emerald-500/20">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<rect height="7" rx="1.5" width="7" x="3" y="3"></rect>
+<rect height="7" rx="1.5" width="7" x="14" y="3"></rect>
+<rect height="7" rx="1.5" width="7" x="14" y="14"></rect>
+<rect height="7" rx="1.5" width="7" x="3" y="14"></rect>
+</svg>
+</div>
+<div class="flex items-center space-x-1 cursor-pointer">
+<span class="font-semibold text-slate-800 text-sm tracking-tight">CRM Workspace</span>
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<button class="text-slate-400 hover:text-slate-600 transition-colors p-1" title="Collapse Menu" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M11 19l-7-7 7-7m8 14l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+<!-- Quick Actions Search Bar -->
+<div class="px-4 pt-4 pb-2">
+<div class="relative flex items-center">
+<svg class="w-4 h-4 absolute left-3 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<input class="w-full bg-slate-50 border border-slate-200 text-xs rounded-lg pl-9 pr-12 py-2 text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all" placeholder="Quick actions" type="text"/>
+<span class="absolute right-2 text-[10px] font-medium bg-white border border-slate-200 text-slate-400 px-1.5 py-0.5 rounded shadow-2xs">⌘K</span>
+</div>
+</div>
+<!-- Main Navigation Links -->
+<nav class="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto custom-scrollbar">
+<!-- Notifications -->
+<a class="flex items-center justify-between px-3 py-2 text-xs font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 group transition-colors" href="#">
+<div class="flex items-center space-x-3">
+<svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"></path>
+</svg>
+<span>Notifications</span>
+</div>
+</a>
+<!-- Tasks -->
+<a class="flex items-center space-x-3 px-3 py-2 text-xs font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 group transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"></path>
+</svg>
+<span>Tasks</span>
+</a>
+<!-- Notes -->
+<a class="flex items-center space-x-3 px-3 py-2 text-xs font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 group transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"></path>
+</svg>
+<span>Notes</span>
+</a>
+<!-- Emails -->
+<a class="flex items-center space-x-3 px-3 py-2 text-xs font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 group transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"></path>
+</svg>
+<span>Emails</span>
+</a>
+<!-- Reports (Active) -->
+<a class="flex items-center space-x-3 px-3 py-2 text-xs font-semibold text-emerald-700 bg-emerald-50 rounded-lg group transition-colors" href="#">
+<svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Reports</span>
+</a>
+<!-- Automations -->
+<a class="flex items-center space-x-3 px-3 py-2 text-xs font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 group transition-colors" href="#">
+<svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"></path>
+</svg>
+<span>Automations</span>
+</a>
+<!-- Records Section -->
+<div class="pt-4 pb-1">
+<div class="px-3 flex items-center justify-between text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+<span>Records</span>
+<button class="hover:text-slate-600">+</button>
+</div>
+</div>
+<a class="flex items-center space-x-3 px-3 py-1.5 text-xs font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 group" href="#">
+<svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"></path>
+</svg>
+<span>Companies</span>
+</a>
+<a class="flex items-center space-x-3 px-3 py-1.5 text-xs font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 group" href="#">
+<svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"></path>
+</svg>
+<span>People</span>
+</a>
+<a class="flex items-center space-x-3 px-3 py-1.5 text-xs font-medium text-slate-600 rounded-lg hover:bg-slate-50 hover:text-slate-900 group" href="#">
+<svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 6h16M4 10h16M4 14h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"></path>
+</svg>
+<span>Lists</span>
+</a>
+</nav>
+<!-- Sidebar Bottom Footer & Trial Widget -->
+<div class="p-3 border-t border-slate-100 space-y-2">
+<a class="flex items-center space-x-2 px-2 py-1 text-xs text-slate-600 hover:text-slate-900" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"></path>
+</svg>
+<span>Invite teammates</span>
+</a>
+<a class="flex items-center space-x-2 px-2 py-1 text-xs text-slate-600 hover:text-slate-900" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"></path>
+</svg>
+<span>Help and first steps</span>
+</a>
+<!-- Trial Status Box -->
+<div class="mt-2 p-2.5 bg-slate-50 rounded-xl border border-slate-200/70 flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+<span class="text-xs font-semibold text-slate-700">14d <span class="font-normal text-slate-500">left in trial</span></span>
+</div>
+<button class="text-[11px] font-medium bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 px-2 py-1 rounded-md transition shadow-2xs" type="button">
+          Billing
+        </button>
+</div>
+</div>
+</aside>
+<!-- END: Sidebar -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 flex flex-col min-w-0 bg-[#FAFCFB] overflow-y-auto">
+<!-- Top Navigation Header -->
+<header class="h-16 px-6 bg-white border-b border-slate-200/80 flex items-center justify-between sticky top-0 z-10" data-purpose="top-navigation">
+<!-- Title & Filter -->
+<div class="flex items-center space-x-4">
+<h1 class="text-lg font-bold text-slate-900">Reports</h1>
+<div class="h-4 w-[1px] bg-slate-200"></div>
+<!-- Time Filter Dropdown -->
+<button class="inline-flex items-center space-x-1.5 text-xs font-medium text-slate-600 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 px-2.5 py-1.5 rounded-lg transition" type="button">
+<span>Last 30 Days</span>
+<svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+<!-- Right Action Items -->
+<div class="flex items-center space-x-3">
+<!-- Export Button -->
+<button class="inline-flex items-center space-x-1.5 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg shadow-2xs transition" type="button">
+<svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Export Report</span>
+</button>
+<!-- User Profile Avatar -->
+<div class="flex items-center space-x-2 pl-2 border-l border-slate-200">
+<div class="w-8 h-8 rounded-full bg-slate-200 ring-2 ring-emerald-500/20 flex items-center justify-center font-medium text-xs text-slate-700 overflow-hidden">
+<span class="text-slate-600">CB</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Content Area -->
+<div class="p-6 space-y-6 max-w-7xl mx-auto w-full">
+<!-- BEGIN: StatCardsRow -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" data-purpose="kpi-metrics-grid">
+<!-- Card 1: Total Revenue -->
+<div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs hover:shadow-xs transition duration-200">
+<div class="flex items-center justify-between">
+<span class="text-xs font-medium text-slate-500">Total Revenue</span>
+<span class="text-slate-400 font-semibold text-xs">$</span>
+</div>
+<div class="mt-3 flex items-baseline justify-between">
+<span class="text-2xl font-bold tracking-tight text-slate-900">$124,500</span>
+</div>
+<div class="mt-2.5 flex items-center space-x-1.5">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/50">
+              +12.5%
+            </span>
+<span class="text-[11px] text-slate-400 font-normal">vs last month</span>
+</div>
+</div>
+<!-- Card 2: Active Deals -->
+<div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs hover:shadow-xs transition duration-200">
+<div class="flex items-center justify-between">
+<span class="text-xs font-medium text-slate-500">Active Deals</span>
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"></path>
+</svg>
+</div>
+<div class="mt-3 flex items-baseline justify-between">
+<span class="text-2xl font-bold tracking-tight text-slate-900">42</span>
+</div>
+<div class="mt-2.5 flex items-center space-x-1.5">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/50">
+              +3
+            </span>
+<span class="text-[11px] text-slate-400 font-normal">new deals</span>
+</div>
+</div>
+<!-- Card 3: Win Rate -->
+<div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs hover:shadow-xs transition duration-200">
+<div class="flex items-center justify-between">
+<span class="text-xs font-medium text-slate-500">Win Rate</span>
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"></path>
+<path d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"></path>
+</svg>
+</div>
+<div class="mt-3 flex items-baseline justify-between">
+<span class="text-2xl font-bold tracking-tight text-slate-900">68%</span>
+</div>
+<div class="mt-2.5 flex items-center space-x-1.5">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/50">
+              +2.1%
+            </span>
+<span class="text-[11px] text-slate-400 font-normal">vs last month</span>
+</div>
+</div>
+<!-- Card 4: Avg Deal Size -->
+<div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs hover:shadow-xs transition duration-200">
+<div class="flex items-center justify-between">
+<span class="text-xs font-medium text-slate-500">Avg Deal Size</span>
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"></path>
+</svg>
+</div>
+<div class="mt-3 flex items-baseline justify-between">
+<span class="text-2xl font-bold tracking-tight text-slate-900">$12,450</span>
+</div>
+<div class="mt-2.5 flex items-center space-x-1.5">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200/50">
+              -1.2%
+            </span>
+<span class="text-[11px] text-slate-400 font-normal">vs last month</span>
+</div>
+</div>
+</section>
+<!-- END: StatCardsRow -->
+<!-- BEGIN: ChartSection -->
+<section class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs" data-purpose="earning-summary-chart">
+<!-- Chart Header -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-6">
+<div class="flex items-center space-x-3">
+<h2 class="text-sm font-bold text-slate-900">Earning Summary</h2>
+<div class="flex items-center space-x-1 text-xs text-slate-500 cursor-pointer hover:text-slate-800">
+<span>Mar 2022 - Oct 2022</span>
+<svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<!-- Chart Legend -->
+<div class="flex items-center space-x-5 text-xs font-medium text-slate-500">
+<div class="flex items-center space-x-2">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+<span class="text-slate-700">Last 6 months</span>
+</div>
+<div class="flex items-center space-x-2">
+<span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+<span>Same period last year</span>
+</div>
+</div>
+</div>
+<!-- SVG Area Chart -->
+<div class="relative w-full h-64 select-none">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 800 240">
+<defs>
+<!-- Mint Green Gradient Area Fill -->
+<lineargradient id="mintGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#10B981" stop-opacity="0.25"></stop>
+<stop offset="100%" stop-color="#10B981" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- Horizontal Grid lines & Y-axis labels -->
+<!-- $300k -->
+<line stroke="#F1F5F9" stroke-dasharray="4 4" stroke-width="1" x1="45" x2="800" y1="20" y2="20"></line>
+<text fill="#94A3B8" font-family="Inter" font-size="10" x="0" y="24">$300k</text>
+<!-- $200k -->
+<line stroke="#F1F5F9" stroke-dasharray="4 4" stroke-width="1" x1="45" x2="800" y1="80" y2="80"></line>
+<text fill="#94A3B8" font-family="Inter" font-size="10" x="0" y="84">$200k</text>
+<!-- $100k -->
+<line stroke="#F1F5F9" stroke-dasharray="4 4" stroke-width="1" x1="45" x2="800" y1="140" y2="140"></line>
+<text fill="#94A3B8" font-family="Inter" font-size="10" x="0" y="144">$100k</text>
+<!-- $0.00 -->
+<line stroke="#F1F5F9" stroke-width="1" x1="45" x2="800" y1="200" y2="200"></line>
+<text fill="#94A3B8" font-family="Inter" font-size="10" x="5" y="204">$0.00</text>
+<!-- Previous Period Comparison Line (Muted Gray Curve) -->
+<path d="M 50 120 
+                 C 110 115, 140 145, 200 135 
+                 C 260 125, 290 85, 350 95 
+                 C 410 105, 450 125, 510 120 
+                 C 570 115, 620 95, 670 100 
+                 C 720 105, 760 120, 800 115" fill="none" stroke="#CBD5E1" stroke-dasharray="3 3" stroke-width="2"></path>
+<!-- Filled Mint Gradient Area under current period -->
+<path d="M 50 140 
+                 C 90 70, 140 100, 200 65 
+                 C 260 30, 290 120, 360 80 
+                 C 430 40, 470 100, 520 60 
+                 C 570 20, 620 70, 680 45 
+                 C 740 20, 770 70, 800 50 
+                 L 800 200 L 50 200 Z" fill="url(#mintGradient)"></path>
+<!-- Primary Metric Wave Line (Emerald/Mint Solid) -->
+<path d="M 50 140 
+                 C 90 70, 140 100, 200 65 
+                 C 260 30, 290 120, 360 80 
+                 C 430 40, 470 100, 520 60 
+                 C 570 20, 620 70, 680 45 
+                 C 740 20, 770 70, 800 50" fill="none" stroke="#10B981" stroke-width="2.5"></path>
+<!-- Sample Highlight Points on Peak (September / October) -->
+<circle cx="680" cy="45" fill="#10B981" r="4.5" stroke="#FFFFFF" stroke-width="2"></circle>
+</svg>
+<!-- Month Markers / X-axis labels -->
+<div class="flex justify-between pl-12 pr-2 pt-2 text-[11px] font-medium text-slate-400">
+<span>May</span>
+<span>Jun</span>
+<span>Jul</span>
+<span>Aug</span>
+<span>Sep</span>
+<span>Oct</span>
+</div>
+</div>
+</section>
+<!-- END: ChartSection -->
+<!-- BEGIN: BottomSplitGrid -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<!-- Deal Sources Card (Left) -->
+<div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col justify-between" data-purpose="deal-sources-card">
+<div>
+<div class="flex items-center justify-between pb-5">
+<h3 class="text-sm font-bold text-slate-900">Deal Sources</h3>
+<button class="text-slate-400 hover:text-slate-600">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+<!-- Progress Bar Sources List -->
+<div class="space-y-4">
+<!-- Item: Website -->
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center space-x-2.5 w-32 shrink-0">
+<svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="10" stroke-width="1.75"></circle>
+<path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" stroke-width="1.75"></path>
+</svg>
+<span class="font-medium text-slate-700">Website</span>
+</div>
+<div class="flex-1 mx-4">
+<div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+<div class="bg-emerald-500 h-2 rounded-full" style="width: 45%"></div>
+</div>
+</div>
+<span class="text-xs font-semibold text-slate-600 w-8 text-right">45%</span>
+</div>
+<!-- Item: LinkedIn -->
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center space-x-2.5 w-32 shrink-0">
+<svg class="w-3.5 h-3.5 text-slate-400" fill="currentColor" viewbox="0 0 24 24">
+<path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"></path>
+</svg>
+<span class="font-medium text-slate-700">LinkedIn</span>
+</div>
+<div class="flex-1 mx-4">
+<div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+<div class="bg-emerald-500 h-2 rounded-full" style="width: 32%"></div>
+</div>
+</div>
+<span class="text-xs font-semibold text-slate-600 w-8 text-right">32%</span>
+</div>
+<!-- Item: Referrals -->
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center space-x-2.5 w-32 shrink-0">
+<svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"></path>
+</svg>
+<span class="font-medium text-slate-700">Referrals</span>
+</div>
+<div class="flex-1 mx-4">
+<div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+<div class="bg-emerald-400 h-2 rounded-full" style="width: 15%"></div>
+</div>
+</div>
+<span class="text-xs font-semibold text-slate-600 w-8 text-right">15%</span>
+</div>
+<!-- Item: Cold Email -->
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center space-x-2.5 w-32 shrink-0">
+<svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"></path>
+</svg>
+<span class="font-medium text-slate-700">Cold Email</span>
+</div>
+<div class="flex-1 mx-4">
+<div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+<div class="bg-emerald-300 h-2 rounded-full" style="width: 8%"></div>
+</div>
+</div>
+<span class="text-xs font-semibold text-slate-600 w-8 text-right">8%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Deals Card (Right) -->
+<div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs" data-purpose="recent-deals-card">
+<div class="flex items-center justify-between pb-4">
+<h3 class="text-sm font-bold text-slate-900">Recent Deals</h3>
+<a class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition" href="#">View all</a>
+</div>
+<!-- Deal Rows -->
+<div class="divide-y divide-slate-100">
+<!-- Row 1: Pentagram Project -->
+<div class="py-3 flex items-center justify-between hover:bg-slate-50/60 -mx-2 px-2 rounded-lg transition">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center font-bold text-xs text-indigo-600">
+                  P
+                </div>
+<div>
+<h4 class="text-xs font-semibold text-slate-800">Pentagram Project</h4>
+<p class="text-[11px] text-slate-400">Closed today</p>
+</div>
+</div>
+<span class="text-xs font-bold text-slate-800">$120,000</span>
+</div>
+<!-- Row 2: Frog Design Contract -->
+<div class="py-3 flex items-center justify-between hover:bg-slate-50/60 -mx-2 px-2 rounded-lg transition">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center font-bold text-xs text-emerald-600">
+                  F
+                </div>
+<div>
+<h4 class="text-xs font-semibold text-slate-800">Frog Design Contract</h4>
+<p class="text-[11px] text-slate-400">Yesterday</p>
+</div>
+</div>
+<span class="text-xs font-bold text-slate-800">$85,000</span>
+</div>
+<!-- Row 3: IDEO Innovation -->
+<div class="py-3 flex items-center justify-between hover:bg-slate-50/60 -mx-2 px-2 rounded-lg transition">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-lg bg-amber-50 border border-amber-100 flex items-center justify-center font-bold text-xs text-amber-600">
+                  I
+                </div>
+<div>
+<h4 class="text-xs font-semibold text-slate-800">IDEO Innovation</h4>
+<p class="text-[11px] text-slate-400">2 days ago</p>
+</div>
+</div>
+<span class="text-xs font-bold text-slate-800">$210,000</span>
+</div>
+</div>
+</div>
+</section>
+<!-- END: BottomSplitGrid -->
+</div>
+</main>
+<!-- END: MainContent -->
+</body></html>

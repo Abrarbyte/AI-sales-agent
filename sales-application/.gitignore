@@ -1,0 +1,40 @@
+# ─── Secrets ───────────────────────────────────────────────
+# Never commit. backend/.env.example documents which keys are needed.
+.env
+*.env
+!*.env.example
+
+# ─── Backend (Django / Python) ─────────────────────────────
+backend/venv/
+__pycache__/
+*.pyc
+backend/db.sqlite3
+backend/media/
+backend/staticfiles/
+
+# Personal daily work reports — not part of the codebase
+backend/reports/
+
+# ─── Mobile (Flutter / Dart) ───────────────────────────────
+mobile/build/
+# Generated when DevTools is opened; a local preference, not project config.
+mobile/devtools_options.yaml
+mobile/.dart_tool/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/android/key.properties
+*.jks
+*.keystore
+
+# ─── Design (React / Vite) ─────────────────────────────────
+design/node_modules/
+design/dist/
+
+# ─── Editors & OS ──────────────────────────────────────────
+.vscode/
+.idea/
+*.iml
+Thumbs.db
+.DS_Store

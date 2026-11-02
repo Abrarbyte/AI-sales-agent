@@ -1,0 +1,34 @@
+# Line endings.
+#
+# Windows checkouts normally convert text files to CRLF. That is fine for
+# files Windows reads, and fatal for files Linux *executes*: a shell script
+# beginning "#!/bin/sh\r" makes the kernel look for an interpreter called
+# "/bin/sh\r", which does not exist, and the container exits immediately.
+#
+# So anything that runs inside a container is pinned to LF.
+
+* text=auto
+
+*.sh            text eol=lf
+Dockerfile      text eol=lf
+*.Dockerfile    text eol=lf
+*.conf          text eol=lf
+.env.example    text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf
+
+# These are run by Windows and want CRLF.
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
+*.ps1           text eol=crlf
+
+# Never touched.
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.ico           binary
+*.ttf           binary
+*.otf           binary
+*.apk           binary
+*.mp4           binary
+*.xlsx          binary

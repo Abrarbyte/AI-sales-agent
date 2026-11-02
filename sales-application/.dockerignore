@@ -1,0 +1,49 @@
+# What Docker must NOT upload when building an image from this folder.
+#
+# The console image is built with the repository root as its context, so
+# without this file Docker would send the Python virtualenv, both Flutter
+# build folders and the whole git history to the daemon - gigabytes, and
+# minutes, on every build.
+
+.git
+.gitignore
+.github
+
+# Python
+backend/venv/
+**/__pycache__/
+*.pyc
+backend/media/
+backend/staticfiles/
+backend/reports/
+backend/db.sqlite3
+.pytest_cache/
+
+# Flutter - build output and local tooling caches are rebuilt inside the
+# image; the sources are what matter.
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+console/android/
+console/ios/
+console/linux/
+console/macos/
+console/windows/
+console/test/
+mobile/
+
+# Never bake secrets into an image.
+**/.env
+**/key.properties
+*.jks
+*.keystore
+
+# Editors, OS, and anything large that is not source.
+.vscode/
+.idea/
+*.apk
+*.mp4
+screenshots/
+Thumbs.db
+.DS_Store

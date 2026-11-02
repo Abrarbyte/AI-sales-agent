@@ -1,0 +1,86 @@
+# Sales application - production stack.
+#
+#   cp backend/.env.example backend/.env   # fill it in
+#   docker compose --env-file backend/.env up -d --build
+#
+# --env-file is required: the ${DB_PASSWORD} etc. below are substituted by
+# compose from that file (the services' env_file only reaches the
+# containers, not this file).
+#
+# Four services: Postgres, the API (gunicorn), the scheduler (the same
+# image running the periodic jobs), and nginx in front, which builds and
+# serves the admin console, serves uploaded media, and proxies /api and
+# /admin to the API.
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-sales_tracker}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in backend/.env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-sales_tracker}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    restart: unless-stopped
+    env_file: backend/.env
+    environment:
+      DB_HOST: db
+    volumes:
+      - media:/data/media
+      - static:/data/static
+    depends_on:
+      db:
+        condition: service_healthy
+    expose:
+      - "8000"
+
+  scheduler:
+    build: ./backend
+    restart: unless-stopped
+    command: scheduler
+    env_file: backend/.env
+    environment:
+      DB_HOST: db
+    volumes:
+      - media:/data/media
+    # After the API is healthy, i.e. after it has run the migrations.
+    depends_on:
+      api:
+        condition: service_healthy
+    # Same image as the API, so it inherits the API's health check (port
+    # 8000), which the scheduler never serves. Off, to stop a false "unhealthy".
+    healthcheck:
+      disable: true
+
+  web:
+    # Builds the admin console with Flutter inside the image and serves it
+    # with nginx, so the server itself needs no Flutter installed.
+    build:
+      context: .
+      dockerfile: deploy/console.Dockerfile
+      # No server address is passed in. The console calls whatever address
+      # it was opened at, since nginx serves it and the API together - so the
+      # same image works on localhost, the office IP and the Tailscale
+      # address, and changing PUBLIC_URL never needs a console rebuild.
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-80}:80"
+    volumes:
+      - media:/srv/media:ro
+      - static:/srv/static:ro
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  media:
+  static:

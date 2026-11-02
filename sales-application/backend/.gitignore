@@ -1,0 +1,18 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Secrets — never commit
+.env
+
+# Local database & uploads
+db.sqlite3
+/media/
+
+# Personal daily reports — not part of the codebase
+/reports/
+
+# Editor/OS junk
+.vscode/
+Thumbs.db

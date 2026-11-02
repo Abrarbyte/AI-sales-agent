@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Where ota_update saves a downloaded app update before handing it to the
+     Android installer: the app's private storage, so no storage permission
+     is needed (#94). -->
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <files-path name="internal_apk_storage" path="ota_update/"/>
+</paths>

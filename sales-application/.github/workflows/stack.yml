@@ -1,0 +1,130 @@
+# Builds the whole stack exactly as the office PC does, starts it, runs every
+# test, and checks it answers - on every pull request, before anything reaches
+# the PC.
+#
+# Until this existed the Docker build had never run anywhere but the PC, so
+# a Dockerfile naming a Flutter image that did not exist was only found by
+# the person deploying, halfway through. Two jobs, in parallel:
+#   stack - the PC's own `docker compose up --build`, the backend tests inside
+#           the API container, then the live checks
+#   apps  - the admin console and the phone app: analyze and test
+# Either one red fails the pull request.
+
+name: Build and test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  stack:
+    # A fixed Ubuntu, not ubuntu-latest: GitHub moves "latest" to a new release
+    # on its own schedule (next on 19 Oct 2026), which would change this check
+    # without any change from us.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Settings file, as a deployment would have it
+        run: |
+          cp backend/.env.example backend/.env
+          sed -i "s|^SECRET_KEY=.*|SECRET_KEY=$(openssl rand -hex 32)|" backend/.env
+          sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=$(openssl rand -hex 16)|" backend/.env
+          # The public address a Tailscale deployment uses. The explicit host,
+          # CORS and CSRF lists are cleared, so this proves PUBLIC_URL alone
+          # is enough.
+          sed -i "s|^PUBLIC_URL=.*|PUBLIC_URL=https://saleshub.example.ts.net|" backend/.env
+          sed -i "s|^ALLOWED_HOSTS=.*|ALLOWED_HOSTS=|" backend/.env
+          sed -i "s|^CORS_ALLOWED_ORIGINS=.*|CORS_ALLOWED_ORIGINS=|" backend/.env
+          sed -i "s|^CSRF_TRUSTED_ORIGINS=.*|CSRF_TRUSTED_ORIGINS=|" backend/.env
+
+      - name: Build and start - the same command as the office PC
+        run: docker compose --env-file backend/.env up -d --build
+
+      - name: Wait for the API to report healthy
+        run: |
+          for i in $(seq 1 60); do
+            state=$(docker inspect -f '{{.State.Health.Status}}' "$(docker compose --env-file backend/.env ps -q api)")
+            echo "api: $state"
+            [ "$state" = "healthy" ] && exit 0
+            sleep 5
+          done
+          exit 1
+
+      - name: All backend tests, inside the API container
+        # --ds is required: the image sets DJANGO_SETTINGS_MODULE to the
+        # production settings, and pytest-django lets that beat pytest.ini.
+        # Tests for bugs not fixed yet are marked xfail(strict=True); see
+        # backend/crm/tests_pipeline_rules.py.
+        run: >
+          docker compose --env-file backend/.env exec -T api
+          python -m pytest --ds=config.settings_test -p no:cacheprovider -rxX
+
+      - name: nginx accepts its configuration
+        run: docker compose --env-file backend/.env exec -T web nginx -t
+
+      - name: The console is served
+        run: curl -fsS http://localhost/ | grep -q flutter_bootstrap.js
+
+      - name: The API answers through nginx
+        run: curl -fsS http://localhost/api/health/
+
+      - name: The app download page is served (#94)
+        run: curl -fsS http://localhost/app | grep -q "Download SalesHub"
+
+      - name: The latest-release endpoint answers without a sign-in
+        run: |
+          # Nothing uploaded on a fresh stack: 404, not 401/403 or a crash.
+          code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost/api/app/latest/)
+          test "$code" = 404
+
+      - name: The public address alone is accepted
+        run: |
+          # What Tailscale Funnel sends: the visitor's Host, and proto https.
+          code=$(curl -s -o /dev/null -w '%{http_code}' \
+            -H 'Host: saleshub.example.ts.net' -H 'X-Forwarded-Proto: https' \
+            http://localhost/api/health/)
+          echo "public host -> $code"
+          [ "$code" = "200" ]
+
+      - name: An unknown host is still refused
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' -H 'Host: evil.example.com' http://localhost/api/health/)
+          echo "unknown host -> $code"
+          [ "$code" = "400" ]
+
+      - name: Logs, if anything failed
+        if: failure()
+        run: docker compose --env-file backend/.env logs --tail=100
+
+  apps:
+    # The admin console and the phone app, checked with the same Flutter the
+    # console image is built with (deploy/console.Dockerfile).
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.1
+          channel: stable
+
+      - name: Console - analyze and test
+        working-directory: console
+        # --no-fatal-infos: style hints don't fail the check; warnings and
+        # errors do.
+        run: |
+          flutter pub get
+          flutter analyze --no-fatal-infos
+          flutter test
+
+      - name: Phone app - analyze and test
+        working-directory: mobile
+        run: |
+          flutter pub get
+          flutter analyze --no-fatal-infos
+          flutter test
